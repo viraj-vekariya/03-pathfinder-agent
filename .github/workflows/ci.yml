@@ -1,0 +1,108 @@
+name: pathfinder-ci
+
+# Each job defends a claim the README makes.
+#
+#   algorithms  the graph algorithms are correct, including on graphs deep enough to
+#               blow a recursive implementation's stack
+#   retrieval   the corpus, embeddings and reranking work, on BOTH embedding backends
+#   agent       the harness works with no model download at all (echo backend)
+#   sweep       the depth sweep still produces the reported numbers, so a regression
+#               in tool-output format fails the build instead of being noticed later
+
+on:
+  push: {branches: [main]}
+  pull_request: {branches: [main]}
+  workflow_dispatch:
+
+jobs:
+  algorithms:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: pip install numpy pytest
+      - name: Algorithm and planner tests
+        # No torch, no transformers. These tests must pass on a machine with no ML
+        # stack at all - if they cannot, the graph layer has picked up a dependency it
+        # has no business having.
+        run: python -m pytest tests/test_algorithms.py tests/test_planner_and_rag.py -q
+
+      - name: A* must agree with Dijkstra on the real graph
+        run: |
+          python - <<'PY'
+          import json, pathlib
+          from graph.build import load
+          from graph.algorithms import a_star, dijkstra
+          from graph.heuristics import (make_depth_heuristic, make_out_degree_heuristic,
+                                        verify_admissible, zero_heuristic)
+          g, _ = load(pathlib.Path("data/dependency_graph.json"))
+          pairs = [("jupyterlab","typing-extensions"), ("langchain","anyio"),
+                   ("flask","markupsafe"), ("dvc","multidict")]
+          for src, tgt in pairs:
+              hs = {"zero": zero_heuristic, "depth": make_depth_heuristic(g, src),
+                    "out_degree": make_out_degree_heuristic(g)}
+              _, _, dij = dijkstra(g, src, tgt)
+              costs = set()
+              for name, h in hs.items():
+                  ok, violations = verify_admissible(g, h, tgt)
+                  assert ok, f"{name} is inadmissible on {src}->{tgt}: {violations[:2]}"
+                  cost, _, _ = a_star(g, src, tgt, h)
+                  costs.add(cost)
+              assert len(costs) == 1, f"heuristics disagree on {src}->{tgt}: {costs}"
+          print("A* admissible and optimal on every pair")
+          PY
+
+  agent-harness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: pip install numpy pytest
+      - name: Harness tests on the echo backend
+        # No model download. These check budgets, eviction, parsing and dispatch -
+        # the parts that must work regardless of which model is plugged in.
+        run: python -m pytest tests/test_agent.py -q
+
+  sweep:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: |
+          pip install --index-url https://download.pytorch.org/whl/cpu torch
+          pip install -r requirements.txt
+
+      - name: Cache the models
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-flan-t5-base-minilm-v1
+
+      - name: Depth sweep (reduced)
+        run: python -m eval.depth_sweep --per-depth 3 --backend flan-t5
+
+      - name: The tool-output format regression gate
+        run: |
+          python - <<'PY'
+          import json
+          r = json.load(open("outputs/depth_sweep.json"))
+          print(json.dumps({k: v for k, v in r.items() if k != "results"}, indent=2)[:900])
+          # The headline of this project is that removing a lead-in phrase from the
+          # tool's own output raised validity from 0.578 to well above it. If a change
+          # reintroduces prose framing into ToolResult.answer_text, this collapses -
+          # which is exactly what the gate is for.
+          assert r["overall_validity"] > 0.70, \
+              f"validity regressed to {r['overall_validity']} - check ToolResult.answer_text"
+          assert r["overall_coverage"] > 0.90, f"coverage regressed to {r['overall_coverage']}"
+          PY
+
+      - name: Attribute any remaining failures
+        run: python -m eval.truncation
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: measured-results
+          path: outputs/*.json

@@ -1,0 +1,238 @@
+{
+  "attribution": {
+    "total_failures": 11,
+    "attribution": {
+      "M1_input_truncation": {
+        "count": 0,
+        "share": 0.0
+      },
+      "M2_output_limit": {
+        "count": 4,
+        "share": 0.3636
+      },
+      "M3_neither": {
+        "count": 3,
+        "share": 0.2727
+      },
+      "M1_and_M2": {
+        "count": 4,
+        "share": 0.3636
+      }
+    },
+    "examples": {
+      "M1_input_truncation": [],
+      "M2_output_limit": [
+        {
+          "package": "jupyter-server",
+          "depth": 7,
+          "closure_size": 54,
+          "coverage": 0.9629629629629629,
+          "prompt_tokens": 347,
+          "tokens_dropped": 0,
+          "output_tokens_needed": 335,
+          "output_cap": 320
+        },
+        {
+          "package": "dvc",
+          "depth": 7,
+          "closure_size": 105,
+          "coverage": 0.5714285714285714,
+          "prompt_tokens": 507,
+          "tokens_dropped": 0,
+          "output_tokens_needed": 570,
+          "output_cap": 320
+        },
+        {
+          "package": "jupyter-lsp",
+          "depth": 8,
+          "closure_size": 55,
+          "coverage": 0.9454545454545454,
+          "prompt_tokens": 357,
+          "tokens_dropped": 0,
+          "output_tokens_needed": 345,
+          "output_cap": 320
+        },
+        {
+          "package": "notebook-shim",
+          "depth": 8,
+          "closure_size": 55,
+          "coverage": 0.9454545454545454,
+          "prompt_tokens": 352,
+          "tokens_dropped": 0,
+          "output_tokens_needed": 340,
+          "output_cap": 320
+        }
+      ],
+      "M3_neither": [
+        {
+          "package": "click-plugins",
+          "depth": 1,
+          "closure_size": 2,
+          "coverage": 0.5,
+          "prompt_tokens": 187,
+          "tokens_dropped": 0,
+          "output_tokens_needed": 7,
+          "output_cap": 320
+        },
+        {
+          "package": "keyring",
+          "depth": 4,
+          "closure_size": 15,
+          "coverage": 0.8666666666666667,
+          "prompt_tokens": 183,
+          "tokens_dropped": 0,
+          "output_tokens_needed": 95,
+          "output_cap": 320
+        },
+        {
+          "package": "poetry",
+          "depth": 5,
+          "closure_size": 48,
+          "coverage": 0.9583333333333334,
+          "prompt_tokens": 261,
+          "tokens_dropped": 0,
+          "output_tokens_needed": 249,
+          "output_cap": 320
+        }
+      ],
+      "M1_and_M2": [
+        {
+          "package": "prefect",
+          "depth": 5,
+          "closure_size": 109,
+          "coverage": 0.5412844036697247,
+          "prompt_tokens": 525,
+          "tokens_dropped": 13,
+          "output_tokens_needed": 590,
+          "output_cap": 320
+        },
+        {
+          "package": "mlflow",
+          "depth": 6,
+          "closure_size": 94,
+          "coverage": 0.6382978723404256,
+          "prompt_tokens": 520,
+          "tokens_dropped": 8,
+          "output_tokens_needed": 501,
+          "output_cap": 320
+        },
+        {
+          "package": "jupyterlab-server",
+          "depth": 8,
+          "closure_size": 62,
+          "coverage": 0.8709677419354839,
+          "prompt_tokens": 579,
+          "tokens_dropped": 67,
+          "output_tokens_needed": 375,
+          "output_cap": 320
+        },
+        {
+          "package": "jupyterlab",
+          "depth": 9,
+          "closure_size": 90,
+          "coverage": 0.6111111111111112,
+          "prompt_tokens": 560,
+          "tokens_dropped": 48,
+          "output_tokens_needed": 545,
+          "output_cap": 320
+        }
+      ]
+    },
+    "output_cap": 320
+  },
+  "context_intervention": {
+    "big_context": 4096,
+    "tasks": 11,
+    "fit_in_512": 11,
+    "fit_in_4096": 11,
+    "would_be_rescued_by_bigger_context": 0,
+    "rows": [
+      {
+        "package": "click-plugins",
+        "answer_prompt_tokens": 28,
+        "fits_in_512": true,
+        "fits_in_4096": true,
+        "tool_output_truncated": false
+      },
+      {
+        "package": "keyring",
+        "answer_prompt_tokens": 114,
+        "fits_in_512": true,
+        "fits_in_4096": true,
+        "tool_output_truncated": false
+      },
+      {
+        "package": "poetry",
+        "answer_prompt_tokens": 267,
+        "fits_in_512": true,
+        "fits_in_4096": true,
+        "tool_output_truncated": false
+      },
+      {
+        "package": "prefect",
+        "answer_prompt_tokens": 352,
+        "fits_in_512": true,
+        "fits_in_4096": true,
+        "tool_output_truncated": true
+      },
+      {
+        "package": "mlflow",
+        "answer_prompt_tokens": 344,
+        "fits_in_512": true,
+        "fits_in_4096": true,
+        "tool_output_truncated": true
+      },
+      {
+        "package": "jupyter-server",
+        "answer_prompt_tokens": 359,
+        "fits_in_512": true,
+        "fits_in_4096": true,
+        "tool_output_truncated": false
+      },
+      {
+        "package": "dvc",
+        "answer_prompt_tokens": 331,
+        "fits_in_512": true,
+        "fits_in_4096": true,
+        "tool_output_truncated": true
+      },
+      {
+        "package": "jupyterlab-server",
+        "answer_prompt_tokens": 395,
+        "fits_in_512": true,
+        "fits_in_4096": true,
+        "tool_output_truncated": true
+      },
+      {
+        "package": "jupyter-lsp",
+        "answer_prompt_tokens": 371,
+        "fits_in_512": true,
+        "fits_in_4096": true,
+        "tool_output_truncated": false
+      },
+      {
+        "package": "notebook-shim",
+        "answer_prompt_tokens": 361,
+        "fits_in_512": true,
+        "fits_in_4096": true,
+        "tool_output_truncated": false
+      },
+      {
+        "package": "jupyterlab",
+        "answer_prompt_tokens": 380,
+        "fits_in_512": true,
+        "fits_in_4096": true,
+        "tool_output_truncated": true
+      }
+    ]
+  },
+  "correlations": {
+    "validity_vs_depth": -0.441,
+    "validity_vs_closure_size": -0.709,
+    "validity_vs_prompt_tokens": -0.7878,
+    "validity_vs_tokens_dropped": -0.4492,
+    "coverage_vs_closure_size": -0.6632,
+    "note": "Negative r means the driver predicts FAILURE. The strongest negative correlate is the mechanism worth fixing first."
+  },
+  "generated_at": "2026-09-10T06:50:09"
+}

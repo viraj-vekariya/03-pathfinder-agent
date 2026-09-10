@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pathfinder</title>
+<!--
+  Pathfinder console. Pick a real package, watch the exact algorithm resolve its
+  install order, then watch the LLM agent attempt the same task and be graded against
+  it side by side.
+
+  Showing both is the whole design. Most agent demos expose only the agent, which makes
+  it impossible to see what the agent costs you. Putting the exact answer next to it
+  turns a demo into a measurement.
+-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.2/babel.min.js"></script>
+<style>
+  :root{
+    --bg:#0c1017; --panel:#141a23; --panel2:#1b2330; --line:#28323f;
+    --text:#e6edf3; --dim:#8a97a8; --accent:#7aa2f7;
+    --ok:#4ec26f; --bad:#f2545b; --warn:#e0a54a; --purple:#bb6bd9;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+  .wrap{max-width:1280px;margin:0 auto;padding:22px 16px 60px}
+  header{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+  h1{font-size:20px;margin:0;letter-spacing:-.02em}
+  .sub{color:var(--dim);font-size:13px}
+  .pill{font:600 11px var(--mono);padding:3px 8px;border-radius:999px;
+        border:1px solid var(--line);background:var(--panel2);color:var(--dim)}
+  .pill.ok{color:var(--ok);border-color:#1e4429} .pill.bad{color:var(--bad);border-color:#5a2327}
+  .bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:16px 0}
+  input,select{font:13px var(--mono);padding:9px 11px;border-radius:7px;
+        border:1px solid var(--line);background:var(--panel2);color:var(--text);min-width:220px}
+  button{font:600 12px/1 inherit;padding:10px 14px;border-radius:7px;cursor:pointer;
+         border:1px solid var(--line);background:var(--panel2);color:var(--text)}
+  button:hover:not(:disabled){border-color:var(--accent)}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#08111f}
+  button:disabled{opacity:.5;cursor:not-allowed}
+  .grid{display:grid;gap:14px}
+  .two{grid-template-columns:1fr 1fr}
+  @media(max-width:900px){.two{grid-template-columns:1fr}}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .panel h2{font-size:12px;margin:0;padding:11px 14px;border-bottom:1px solid var(--line);
+            color:var(--dim);text-transform:uppercase;letter-spacing:.07em;font-weight:600;
+            display:flex;justify-content:space-between;gap:8px;align-items:center}
+  .pad{padding:13px 14px}
+  ol{margin:0;padding-left:26px;font-family:var(--mono);font-size:12px;line-height:1.75}
+  ol li::marker{color:var(--dim)}
+  .miss{color:var(--bad)} .match{color:var(--ok)}
+  .kv{display:grid;grid-template-columns:auto 1fr;gap:3px 14px;font:12px var(--mono)}
+  .kv dt{color:var(--dim)} .kv dd{margin:0}
+  .note{color:var(--dim);font-size:12px;padding:0 14px 13px;line-height:1.5}
+  code{font-family:var(--mono);background:var(--panel2);padding:1px 5px;border-radius:4px}
+  table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px}
+  th{background:var(--panel2);color:var(--dim);text-align:right;padding:7px 10px;
+     font-size:11px;border-bottom:1px solid var(--line)}
+  th:first-child,td:first-child{text-align:left}
+  td{padding:6px 10px;border-bottom:1px solid #1a2330;text-align:right}
+  .chain{font:12px var(--mono);color:var(--dim);word-break:break-word;line-height:1.7}
+  .empty{padding:26px 14px;color:var(--dim);text-align:center;font-size:12px}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect,useCallback} = React;
+const j = (u) => fetch(u).then(r => r.ok ? r.json() : r.json().then(e=>Promise.reject(e.detail||r.status)));
+
+function Orders({truth, agent}){
+  if(!truth) return null;
+  const agentSet = new Set(agent||[]);
+  const truthSet = new Set(truth);
+  return <div className="grid two">
+    <div className="panel">
+      <h2>Algorithm <span className="pill ok">exact</span></h2>
+      <div className="pad"><ol>{truth.map(p =>
+        <li key={p} className={agent ? (agentSet.has(p) ? "match" : "miss") : ""}>{p}</li>)}</ol></div>
+      {agent && <div className="note">Red = the agent omitted it.</div>}
+    </div>
+    <div className="panel">
+      <h2>LLM agent</h2>
+      <div className="pad">{agent && agent.length
+        ? <ol>{agent.map((p,i) =>
+            <li key={i} className={truthSet.has(p) ? "" : "miss"}>{p}</li>)}</ol>
+        : <div className="empty">no agent answer</div>}</div>
+    </div>
+  </div>;
+}
+
+function App(){
+  const [health,setHealth] = useState(null);
+  const [pkg,setPkg] = useState("flask");
+  const [suggest,setSuggest] = useState([]);
+  const [result,setResult] = useState(null);
+  const [depths,setDepths] = useState(null);
+  const [busy,setBusy] = useState("");
+  const [err,setErr] = useState("");
+
+  useEffect(()=>{ j("/health").then(setHealth).catch(()=>{}); j("/depths").then(setDepths).catch(()=>{}); },[]);
+  useEffect(()=>{ if(pkg.length>1) j(`/packages?q=${pkg}&limit=8`).then(d=>setSuggest(d.packages)).catch(()=>{}); },[pkg]);
+
+  const run = async (withAgent) => {
+    setBusy(withAgent?"agent":"plan"); setErr(""); setResult(null);
+    try{
+      if(withAgent){ setResult(await j(`/compare/${pkg}`)); }
+      else {
+        const p = await j(`/plan/${pkg}`);
+        setResult({package:pkg, depth:p.depth, closure_size:p.closure_size,
+                   algorithm:{order:p.order}, cycles:p.cycles, agent:null, ms:p.ms});
+      }
+    }catch(e){ setErr(String(e)); }
+    finally{ setBusy(""); }
+  };
+
+  const a = result?.agent;
+
+  return <div className="wrap">
+    <header>
+      <h1>Pathfinder</h1>
+      <span className="sub">real PyPI dependency graphs · graph search vs an LLM agent</span>
+      {health && <span className={"pill "+(health.status==="ok"?"ok":"bad")}>{health.status}</span>}
+      {health?.graph && <span className="pill">{health.graph.nodes} packages</span>}
+      {health?.llm && <span className="pill">{health.llm.model} · {health.llm.context_limit} ctx</span>}
+    </header>
+
+    <div className="bar">
+      <input value={pkg} onChange={e=>setPkg(e.target.value.trim().toLowerCase())}
+             placeholder="package name" list="pkgs"/>
+      <datalist id="pkgs">{suggest.map(s=><option key={s} value={s}/>)}</datalist>
+      <button className="primary" disabled={!!busy} onClick={()=>run(false)}>
+        {busy==="plan"?"resolving…":"Resolve (algorithm)"}</button>
+      <button disabled={!!busy} onClick={()=>run(true)}>
+        {busy==="agent"?"running agent…":"Run agent & compare"}</button>
+      {["flask","jupyterlab","langchain","dvc","apache-airflow"].map(s =>
+        <button key={s} onClick={()=>setPkg(s)} style={{padding:"7px 10px",fontWeight:400}}>{s}</button>)}
+    </div>
+
+    {err && <div className="panel"><div className="pad" style={{color:"var(--bad)"}}>{err}</div></div>}
+
+    {result && <>
+      <div className="panel" style={{marginBottom:14}}>
+        <h2>{result.package}</h2>
+        <div className="pad">
+          <dl className="kv">
+            <dt>dependency depth</dt><dd>{result.depth}</dd>
+            <dt>packages to install</dt><dd>{result.closure_size}</dd>
+            {result.ms!==undefined && <><dt>algorithm time</dt><dd>{result.ms} ms</dd></>}
+            {a && <>
+              <dt>agent valid</dt>
+              <dd style={{color:a.valid?"var(--ok)":"var(--bad)"}}>{String(a.valid)}</dd>
+              <dt>agent coverage</dt><dd>{(a.coverage*100).toFixed(0)}%</dd>
+              <dt>tools used</dt><dd>{a.tools_used.join(", ")||"none"}</dd>
+              <dt>prompt tokens</dt>
+              <dd>{a.max_prompt_tokens} / {a.context_limit}
+                {a.input_truncated && <span style={{color:"var(--warn)"}}> · TRUNCATED, {a.tokens_dropped} dropped</span>}</dd>
+              <dt>agent time</dt><dd>{a.seconds}s</dd>
+            </>}
+          </dl>
+          {a && !a.valid && <div style={{marginTop:9,color:"var(--bad)",fontSize:12}}>{a.reason}</div>}
+          {result.cycles?.length>0 && <div style={{marginTop:9,color:"var(--warn)",fontSize:12}}>
+            circular dependency — no total order exists: {result.cycles[0].join(" → ")}</div>}
+        </div>
+      </div>
+
+      <Orders truth={result.algorithm?.order} agent={a?.order}/>
+    </>}
+
+    {depths && <div className="panel" style={{marginTop:14}}>
+      <h2>Packages available at each dependency depth</h2>
+      <table>
+        <thead><tr><th>depth</th><th>packages</th><th>examples</th></tr></thead>
+        <tbody>{Object.entries(depths).map(([d,v])=>
+          <tr key={d}><td>{d}</td><td>{v.count}</td>
+            <td style={{textAlign:"left",color:"var(--dim)"}}>{v.examples.join(", ")}</td></tr>)}
+        </tbody>
+      </table>
+      <div className="note">
+        The evaluation samples tasks from this frame, equally per depth. Deeper packages
+        also have larger closures, so depth and size are confounded — stated in the
+        results rather than smoothed over.
+      </div>
+    </div>}
+  </div>;
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>

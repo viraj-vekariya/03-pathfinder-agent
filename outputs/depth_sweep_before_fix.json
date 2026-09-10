@@ -1,0 +1,971 @@
+{
+  "generated_at": "2026-09-10T06:34:48",
+  "backend": "flan-t5",
+  "model": "google/flan-t5-base",
+  "context_limit": 512,
+  "graph": {
+    "nodes": 411,
+    "edges": 989
+  },
+  "config": {
+    "per_depth": 6,
+    "seed": 20260910
+  },
+  "tasks": 45,
+  "overall_validity": 0.5778,
+  "overall_coverage": 0.8731,
+  "by_depth": {
+    "1": {
+      "n": 6,
+      "validity": 1.0,
+      "mean_coverage": 1.0,
+      "mean_closure_size": 3.2,
+      "mean_prompt_tokens": 187.0,
+      "truncation_rate": 0.0,
+      "mean_tokens_dropped": 0.0,
+      "mean_order_violations": 0.0
+    },
+    "2": {
+      "n": 6,
+      "validity": 0.8333,
+      "mean_coverage": 0.8667,
+      "mean_closure_size": 4.2,
+      "mean_prompt_tokens": 187.7,
+      "truncation_rate": 0.0,
+      "mean_tokens_dropped": 0.0,
+      "mean_order_violations": 0.0
+    },
+    "3": {
+      "n": 6,
+      "validity": 0.3333,
+      "mean_coverage": 0.7027,
+      "mean_closure_size": 7.8,
+      "mean_prompt_tokens": 187.8,
+      "truncation_rate": 0.0,
+      "mean_tokens_dropped": 0.0,
+      "mean_order_violations": 0.0
+    },
+    "4": {
+      "n": 6,
+      "validity": 1.0,
+      "mean_coverage": 1.0,
+      "mean_closure_size": 15.3,
+      "mean_prompt_tokens": 207.3,
+      "truncation_rate": 0.0,
+      "mean_tokens_dropped": 0.0,
+      "mean_order_violations": 0.0
+    },
+    "5": {
+      "n": 6,
+      "validity": 0.8333,
+      "mean_coverage": 0.9965,
+      "mean_closure_size": 30.5,
+      "mean_prompt_tokens": 219.8,
+      "truncation_rate": 0.0,
+      "mean_tokens_dropped": 0.0,
+      "mean_order_violations": 0.0
+    },
+    "6": {
+      "n": 6,
+      "validity": 0.3333,
+      "mean_coverage": 0.7423,
+      "mean_closure_size": 43.7,
+      "mean_prompt_tokens": 274.3,
+      "truncation_rate": 0.1667,
+      "mean_tokens_dropped": 1.3,
+      "mean_order_violations": 0.0
+    },
+    "7": {
+      "n": 3,
+      "validity": 0.0,
+      "mean_coverage": 0.8009,
+      "mean_closure_size": 65.7,
+      "mean_prompt_tokens": 373.7,
+      "truncation_rate": 0.0,
+      "mean_tokens_dropped": 0.0,
+      "mean_order_violations": 0.0
+    },
+    "8": {
+      "n": 4,
+      "validity": 0.0,
+      "mean_coverage": 0.8876,
+      "mean_closure_size": 53.0,
+      "mean_prompt_tokens": 397.8,
+      "truncation_rate": 0.25,
+      "mean_tokens_dropped": 16.8,
+      "mean_order_violations": 0.0
+    },
+    "9": {
+      "n": 2,
+      "validity": 0.0,
+      "mean_coverage": 0.7446,
+      "mean_closure_size": 65.5,
+      "mean_prompt_tokens": 400.0,
+      "truncation_rate": 0.5,
+      "mean_tokens_dropped": 24.0,
+      "mean_order_violations": 0.0
+    }
+  },
+  "collapse_depth": 3,
+  "deepest_success": 6,
+  "shallowest_failure": 2,
+  "seconds": 714.5,
+  "results": [
+    {
+      "package": "click-plugins",
+      "depth": 1,
+      "closure_size": 2,
+      "valid": true,
+      "coverage": 1.0,
+      "order_violations": 0,
+      "missing": 0,
+      "reason": "valid: 2 packages, dependencies before dependents",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 187,
+      "context_limit": 512,
+      "proposed_length": 2,
+      "seconds": 2.117434666957706
+    },
+    {
+      "package": "httpcore",
+      "depth": 1,
+      "closure_size": 3,
+      "valid": true,
+      "coverage": 1.0,
+      "order_violations": 0,
+      "missing": 0,
+      "reason": "valid: 3 packages, dependencies before dependents",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 183,
+      "context_limit": 512,
+      "proposed_length": 3,
+      "seconds": 0.33055762498406693
+    },
+    {
+      "package": "beautifulsoup4",
+      "depth": 1,
+      "closure_size": 3,
+      "valid": true,
+      "coverage": 1.0,
+      "order_violations": 0,
+      "missing": 0,
+      "reason": "valid: 3 packages, dependencies before dependents",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 191,
+      "context_limit": 512,
+      "proposed_length": 3,
+      "seconds": 0.5495755830197595
+    },
+    {
+      "package": "dulwich",
+      "depth": 1,
+      "closure_size": 3,
+      "valid": true,
+      "coverage": 1.0,
+      "order_violations": 0,
+      "missing": 0,
+      "reason": "valid: 3 packages, dependencies before dependents",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 187,
+      "context_limit": 512,
+      "proposed_length": 3,
+      "seconds": 0.38819395896280184
+    },
+    {
+      "package": "uvicorn",
+      "depth": 1,
+      "closure_size": 4,
+      "valid": true,
+      "coverage": 1.0,
+      "order_violations": 0,
+      "missing": 0,
+      "reason": "valid: 4 packages, dependencies before dependents",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 186,
+      "context_limit": 512,
+      "proposed_length": 4,
+      "seconds": 0.42737541696988046
+    },
+    {
+      "package": "libcst",
+      "depth": 1,
+      "closure_size": 4,
+      "valid": true,
+      "coverage": 1.0,
+      "order_violations": 0,
+      "missing": 0,
+      "reason": "valid: 4 packages, dependencies before dependents",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 188,
+      "context_limit": 512,
+      "proposed_length": 4,
+      "seconds": 0.578113250026945
+    },
+    {
+      "package": "whenever",
+      "depth": 2,
+      "closure_size": 3,
+      "valid": true,
+      "coverage": 1.0,
+      "order_violations": 0,
+      "missing": 0,
+      "reason": "valid: 3 packages, dependencies before dependents",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 182,
+      "context_limit": 512,
+      "proposed_length": 3,
+      "seconds": 0.35629633301869035
+    },
+    {
+      "package": "jsonschema-specifications",
+      "depth": 2,
+      "closure_size": 5,
+      "valid": false,
+      "coverage": 0.2,
+      "order_violations": 0,
+      "missing": 4,
+      "reason": "missing 4 required package(s), first: attrs",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 194,
+      "context_limit": 512,
+      "proposed_length": 1,
+      "seconds": 0.5101373749785125
+    },
+    {
+      "package": "pyzmq",
+      "depth": 2,
+      "closure_size": 3,
+      "valid": true,
+      "coverage": 1.0,
+      "order_violations": 0,
+      "missing": 0,
+      "reason": "valid: 3 packages, dependencies before dependents",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 190,
+      "context_limit": 512,
+      "proposed_length": 3,
+      "seconds": 0.7245289999991655
+    },
+    {
+      "package": "graphql-relay",
+      "depth": 2,
+      "closure_size": 3,
+      "valid": true,
+      "coverage": 1.0,
+      "order_violations": 0,
+      "missing": 0,
+      "reason": "valid: 3 packages, dependencies before dependents",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 191,
+      "context_limit": 512,
+      "proposed_length": 3,
+      "seconds": 0.9131404159707017
+    },
+    {
+      "package": "anyio",
+      "depth": 2,
+      "closure_size": 4,
+      "valid": true,
+      "coverage": 1.0,
+      "order_violations": 0,
+      "missing": 0,
+      "reason": "valid: 4 packages, dependencies before dependents",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 185,
+      "context_limit": 512,
+      "proposed_length": 4,
+      "seconds": 0.9175211249967106
+    },
+    {
+      "package": "cachecontrol",
+      "depth": 2,
+      "closure_size": 7,
+      "valid": true,
+      "coverage": 1.0,
+      "order_violations": 0,
+      "missing": 0,
+      "reason": "valid: 7 packages, dependencies before dependents",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 184,
+      "context_limit": 512,
+      "proposed_length": 7,
+      "seconds": 1.3225372500019148
+    },
+    {
+      "package": "asyncssh",
+      "depth": 3,
+      "closure_size": 5,
+      "valid": true,
+      "coverage": 1.0,
+      "order_violations": 0,
+      "missing": 0,
+      "reason": "valid: 5 packages, dependencies before dependents",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 194,
+      "context_limit": 512,
+      "proposed_length": 5,
+      "seconds": 1.102997249981854
+    },
+    {
+      "package": "typer",
+      "depth": 3,
+      "closure_size": 8,
+      "valid": false,
+      "coverage": 0.125,
+      "order_violations": 0,
+      "missing": 7,
+      "reason": "missing 7 required package(s), first: annotated-doc",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 183,
+      "context_limit": 512,
+      "proposed_length": 1,
+      "seconds": 0.5455629999632947
+    },
+    {
+      "package": "skops",
+      "depth": 3,
+      "closure_size": 11,
+      "valid": false,
+      "coverage": 0.09090909090909091,
+      "order_violations": 0,
+      "missing": 10,
+      "reason": "missing 10 required package(s), first: cloudpickle",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 186,
+      "context_limit": 512,
+      "proposed_length": 1,
+      "seconds": 0.4754020829568617
+    },
+    {
+      "package": "arrow",
+      "depth": 3,
+      "closure_size": 7,
+      "valid": false,
+      "coverage": 1.0,
+      "order_violations": 0,
+      "missing": 0,
+      "reason": "1 duplicate entr(ies), first: arrow",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 182,
+      "context_limit": 512,
+      "proposed_length": 8,
+      "seconds": 1.4604604170308448
+    },
+    {
+      "package": "hydra-core",
+      "depth": 3,
+      "closure_size": 9,
+      "valid": true,
+      "coverage": 1.0,
+      "order_violations": 0,
+      "missing": 0,
+      "reason": "valid: 9 packages, dependencies before dependents",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 188,
+      "context_limit": 512,
+      "proposed_length": 9,
+      "seconds": 2.190165083971806
+    },
+    {
+      "package": "pydantic-settings",
+      "depth": 3,
+      "closure_size": 7,
+      "valid": false,
+      "coverage": 1.0,
+      "order_violations": 0,
+      "missing": 0,
+      "reason": "1 duplicate entr(ies), first: pydantic-settings",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 194,
+      "context_limit": 512,
+      "proposed_length": 8,
+      "seconds": 2.6600237080128863
+    },
+    {
+      "package": "jupyter-events",
+      "depth": 4,
+      "closure_size": 14,
+      "valid": true,
+      "coverage": 1.0,
+      "order_violations": 0,
+      "missing": 0,
+      "reason": "valid: 14 packages, dependencies before dependents",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 196,
+      "context_limit": 512,
+      "proposed_length": 14,
+      "seconds": 2.725672125001438
+    },
+    {
+      "package": "opentelemetry-exporter-otlp-proto-http",
+      "depth": 4,
+      "closure_size": 14,
+      "valid": true,
+      "coverage": 1.0,
+      "order_violations": 0,
+      "missing": 0,
+      "reason": "valid: 14 packages, dependencies before dependents",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 213,
+      "context_limit": 512,
+      "proposed_length": 14,
+      "seconds": 3.1772464999812655
+    },
+    {
+      "package": "boto3",
+      "depth": 4,
+      "closure_size": 7,
+      "valid": true,
+      "coverage": 1.0,
+      "order_violations": 0,
+      "missing": 0,
+      "reason": "valid: 7 packages, dependencies before dependents",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 183,
+      "context_limit": 512,
+      "proposed_length": 7,
+      "seconds": 1.120563083968591
+    },
+    {
+      "package": "opentelemetry-exporter-otlp-proto-grpc",
+      "depth": 4,
+      "closure_size": 10,
+      "valid": true,
+      "coverage": 1.0,
+      "order_violations": 0,
+      "missing": 0,
+      "reason": "valid: 10 packages, dependencies before dependents",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 219,
+      "context_limit": 512,
+      "proposed_length": 10,
+      "seconds": 3.1607920000096783
+    },
+    {
+      "package": "databricks-sdk",
+      "depth": 4,
+      "closure_size": 14,
+      "valid": true,
+      "coverage": 1.0,
+      "order_violations": 0,
+      "missing": 0,
+      "reason": "valid: 14 packages, dependencies before dependents",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 195,
+      "context_limit": 512,
+      "proposed_length": 14,
+      "seconds": 2.2811891669989564
+    },
+    {
+      "package": "ipykernel",
+      "depth": 4,
+      "closure_size": 33,
+      "valid": true,
+      "coverage": 1.0,
+      "order_violations": 0,
+      "missing": 0,
+      "reason": "valid: 33 packages, dependencies before dependents",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 238,
+      "context_limit": 512,
+      "proposed_length": 33,
+      "seconds": 4.969073084008414
+    },
+    {
+      "package": "dvc-http",
+      "depth": 5,
+      "closure_size": 14,
+      "valid": true,
+      "coverage": 1.0,
+      "order_violations": 0,
+      "missing": 0,
+      "reason": "valid: 14 packages, dependencies before dependents",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 190,
+      "context_limit": 512,
+      "proposed_length": 14,
+      "seconds": 3.0534383750054985
+    },
+    {
+      "package": "poetry",
+      "depth": 5,
+      "closure_size": 48,
+      "valid": false,
+      "coverage": 0.9791666666666666,
+      "order_violations": 0,
+      "missing": 1,
+      "reason": "missing 1 required package(s), first: fastjsonschema",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 283,
+      "context_limit": 512,
+      "proposed_length": 47,
+      "seconds": 7.920654707995709
+    },
+    {
+      "package": "great-expectations",
+      "depth": 5,
+      "closure_size": 38,
+      "valid": true,
+      "coverage": 1.0,
+      "order_violations": 0,
+      "missing": 0,
+      "reason": "valid: 38 packages, dependencies before dependents",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 258,
+      "context_limit": 512,
+      "proposed_length": 38,
+      "seconds": 10.110528874967713
+    },
+    {
+      "package": "datasets",
+      "depth": 5,
+      "closure_size": 30,
+      "valid": true,
+      "coverage": 1.0,
+      "order_violations": 0,
+      "missing": 0,
+      "reason": "valid: 30 packages, dependencies before dependents",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 184,
+      "context_limit": 512,
+      "proposed_length": 30,
+      "seconds": 6.321577167022042
+    },
+    {
+      "package": "google-cloud-core",
+      "depth": 5,
+      "closure_size": 18,
+      "valid": true,
+      "coverage": 1.0,
+      "order_violations": 0,
+      "missing": 0,
+      "reason": "valid: 18 packages, dependencies before dependents",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 191,
+      "context_limit": 512,
+      "proposed_length": 18,
+      "seconds": 10.73448450001888
+    },
+    {
+      "package": "langchain-core",
+      "depth": 5,
+      "closure_size": 35,
+      "valid": true,
+      "coverage": 1.0,
+      "order_violations": 0,
+      "missing": 0,
+      "reason": "valid: 35 packages, dependencies before dependents",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 213,
+      "context_limit": 512,
+      "proposed_length": 35,
+      "seconds": 49.38022466702387
+    },
+    {
+      "package": "langgraph-sdk",
+      "depth": 6,
+      "closure_size": 36,
+      "valid": false,
+      "coverage": 0.8888888888888888,
+      "order_violations": 0,
+      "missing": 4,
+      "reason": "missing 4 required package(s), first: annotated-types",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 224,
+      "context_limit": 512,
+      "proposed_length": 32,
+      "seconds": 61.85926187504083
+    },
+    {
+      "package": "gto",
+      "depth": 6,
+      "closure_size": 45,
+      "valid": true,
+      "coverage": 1.0,
+      "order_violations": 0,
+      "missing": 0,
+      "reason": "valid: 45 packages, dependencies before dependents",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 298,
+      "context_limit": 512,
+      "proposed_length": 45,
+      "seconds": 53.76535708300071
+    },
+    {
+      "package": "transformers",
+      "depth": 6,
+      "closure_size": 29,
+      "valid": false,
+      "coverage": 0.034482758620689655,
+      "order_violations": 0,
+      "missing": 28,
+      "reason": "missing 28 required package(s), first: annotated-doc",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 184,
+      "context_limit": 512,
+      "proposed_length": 1,
+      "seconds": 15.057731417007744
+    },
+    {
+      "package": "mlflow",
+      "depth": 6,
+      "closure_size": 94,
+      "valid": false,
+      "coverage": 0.6382978723404256,
+      "order_violations": 0,
+      "missing": 34,
+      "reason": "missing 34 required package(s), first: aiohttp",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": true,
+      "tokens_dropped": 8,
+      "max_prompt_tokens": 520,
+      "context_limit": 512,
+      "proposed_length": 60,
+      "seconds": 81.87499745795503
+    },
+    {
+      "package": "langgraph-checkpoint",
+      "depth": 6,
+      "closure_size": 37,
+      "valid": false,
+      "coverage": 0.8918918918918919,
+      "order_violations": 0,
+      "missing": 4,
+      "reason": "missing 4 required package(s), first: annotated-types",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 227,
+      "context_limit": 512,
+      "proposed_length": 33,
+      "seconds": 84.74288504198194
+    },
+    {
+      "package": "google-cloud-storage",
+      "depth": 6,
+      "closure_size": 21,
+      "valid": true,
+      "coverage": 1.0,
+      "order_violations": 0,
+      "missing": 0,
+      "reason": "valid: 21 packages, dependencies before dependents",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 193,
+      "context_limit": 512,
+      "proposed_length": 21,
+      "seconds": 24.35077962500509
+    },
+    {
+      "package": "jupyter-server",
+      "depth": 7,
+      "closure_size": 54,
+      "valid": false,
+      "coverage": 0.9629629629629629,
+      "order_violations": 0,
+      "missing": 2,
+      "reason": "missing 2 required package(s), first: jupyter-server",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 381,
+      "context_limit": 512,
+      "proposed_length": 52,
+      "seconds": 64.15132270898903
+    },
+    {
+      "package": "langgraph-prebuilt",
+      "depth": 7,
+      "closure_size": 38,
+      "valid": false,
+      "coverage": 0.868421052631579,
+      "order_violations": 0,
+      "missing": 5,
+      "reason": "missing 5 required package(s), first: annotated-types",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 233,
+      "context_limit": 512,
+      "proposed_length": 33,
+      "seconds": 68.4031479160185
+    },
+    {
+      "package": "dvc",
+      "depth": 7,
+      "closure_size": 105,
+      "valid": false,
+      "coverage": 0.5714285714285714,
+      "order_violations": 0,
+      "missing": 45,
+      "reason": "missing 45 required package(s), first: aiohttp",
+      "tools_used": [
+        "correct_install_order",
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 507,
+      "context_limit": 512,
+      "proposed_length": 60,
+      "seconds": 54.13506820896873
+    },
+    {
+      "package": "jupyter-lsp",
+      "depth": 8,
+      "closure_size": 55,
+      "valid": false,
+      "coverage": 0.9454545454545454,
+      "order_violations": 0,
+      "missing": 3,
+      "reason": "missing 3 required package(s), first: jupyter-lsp",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 395,
+      "context_limit": 512,
+      "proposed_length": 52,
+      "seconds": 32.41404208401218
+    },
+    {
+      "package": "notebook-shim",
+      "depth": 8,
+      "closure_size": 55,
+      "valid": false,
+      "coverage": 0.9090909090909091,
+      "order_violations": 0,
+      "missing": 5,
+      "reason": "missing 5 required package(s), first: jupyter-events",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 380,
+      "context_limit": 512,
+      "proposed_length": 51,
+      "seconds": 11.260761500045191
+    },
+    {
+      "package": "jupyterlab-server",
+      "depth": 8,
+      "closure_size": 62,
+      "valid": false,
+      "coverage": 0.8709677419354839,
+      "order_violations": 0,
+      "missing": 8,
+      "reason": "missing 8 required package(s), first: jsonschema",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": true,
+      "tokens_dropped": 67,
+      "max_prompt_tokens": 579,
+      "context_limit": 512,
+      "proposed_length": 54,
+      "seconds": 12.113521582970861
+    },
+    {
+      "package": "langgraph",
+      "depth": 8,
+      "closure_size": 40,
+      "valid": false,
+      "coverage": 0.825,
+      "order_violations": 0,
+      "missing": 7,
+      "reason": "missing 7 required package(s), first: annotated-types",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 237,
+      "context_limit": 512,
+      "proposed_length": 33,
+      "seconds": 4.500766667013522
+    },
+    {
+      "package": "langchain",
+      "depth": 9,
+      "closure_size": 41,
+      "valid": false,
+      "coverage": 0.8780487804878049,
+      "order_violations": 0,
+      "missing": 5,
+      "reason": "missing 5 required package(s), first: annotated-types",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": false,
+      "tokens_dropped": 0,
+      "max_prompt_tokens": 240,
+      "context_limit": 512,
+      "proposed_length": 36,
+      "seconds": 7.5507640420109965
+    },
+    {
+      "package": "jupyterlab",
+      "depth": 9,
+      "closure_size": 90,
+      "valid": false,
+      "coverage": 0.6111111111111112,
+      "order_violations": 0,
+      "missing": 35,
+      "reason": "missing 35 required package(s), first: anyio",
+      "tools_used": [
+        "correct_install_order"
+      ],
+      "input_truncated": true,
+      "tokens_dropped": 48,
+      "max_prompt_tokens": 560,
+      "context_limit": 512,
+      "proposed_length": 55,
+      "seconds": 15.585144500015303
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+# fly deploy --config infra/fly.toml --dockerfile infra/Dockerfile
+app = "pathfinder-agent"
+primary_region = "sin"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  PATHFINDER_GRAPH = "/app/data/dependency_graph.json"
+  HF_HOME = "/app/.cache"
+
+[http_service]
+  internal_port = 8300
+  force_https = true
+  # No scale-to-zero: a cold start reloads flan-t5-base and re-embeds 822 documents.
+  # Paying that on a user's request would put ~30s in front of a 200ms endpoint.
+  auto_stop_machines = false
+  min_machines_running = 1
+
+  [[http_service.checks]]
+    interval = "20s"
+    timeout = "5s"
+    grace_period = "180s"
+    method = "GET"
+    path = "/health"
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 2
+  # 1GB is not enough: flan-t5-base (250M params) plus MiniLM plus the embedding matrix
+  # sit around 1.4GB resident.
+  memory_mb = 2048

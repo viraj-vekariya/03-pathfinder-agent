@@ -1,0 +1,16 @@
+# Graph + API
+fastapi>=0.115
+uvicorn[standard]>=0.30
+
+# Retrieval and the local model. transformers pulls torch; both are optional at
+# runtime - rag/embed.py falls back to hashed TF-IDF and agent/llm.py to the echo
+# backend, and CI exercises both paths.
+numpy>=1.26
+transformers>=4.40
+torch>=2.2
+
+# pgvector backend (optional; the numpy store is the default)
+psycopg[binary]>=3.1
+
+# Tests
+pytest>=8.0

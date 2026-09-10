@@ -1,0 +1,423 @@
+{
+  "project": "Pathfinder Agent",
+  "role": "CV1 / Software Development + Applied AI - DSA + Python backbone",
+  "generated_at": "2026-09-10T06:52:22",
+  "verified_on": {
+    "platform": "macOS-27.0-arm64-arm-64bit-Mach-O",
+    "python": "3.13.9"
+  },
+  "lines_of_code": {
+    "graph": 909,
+    "rag": 654,
+    "agent": 747,
+    "eval": 616,
+    "api": 559,
+    "tests": 483,
+    "infra": 264,
+    "total": 4232
+  },
+  "tests": "51 passed in 0.19s",
+  "data": {
+    "source": "PyPI JSON API (live, public, no credentials)",
+    "packages": 411,
+    "edges": 989,
+    "roots": 31,
+    "real_cycle_found": "apache-airflow -> apache-airflow-core -> apache-airflow-providers-common-compat -> ... -> apache-airflow-task-sdk -> apache-airflow  (a genuine circular dependency in a major real package family, found by Tarjan on live data)"
+  },
+  "headline_finding": {
+    "claim_tested": "Agent plan quality collapses as dependency depth grows, and the cause is context-window truncation.",
+    "verdict": "BOTH HALVES FALSIFIED. Quality did fall with depth (r = -0.59), but truncation explains none of it, and the real cause was the FORMAT of the tool's own output.",
+    "evidence": {
+      "input_truncation_share_of_failures": 0.0,
+      "failures_rescued_by_a_bigger_context": 0,
+      "failures_that_fit_in_512_tokens": "19 of 19",
+      "output_cap_320_vs_1024": "identical coverage on 10 failures; 0 improved",
+      "ordering_violations_across_every_failure": 0,
+      "share_of_failures_that_were_missing_packages": 0.89
+    },
+    "actual_mechanism": "flan-t5-base treated the answer step as EXTRACTIVE QA. Given a prompt containing 'Correct install order for typer: annotated-doc, colorama, ...' and asked 'what is the correct install order for typer?', it returned the shortest span that answers the question - the single word 'typer'. The full correct answer was in the prompt, well inside the context limit, with the output cap raised. It emitted one word.",
+    "the_fix": "Change what the TOOL returns, not the model and not the prompt. ToolResult now carries `answer_text` - the bare list with no 'Correct install order for X:' lead-in - alongside the prose `summary` used for planning traces."
+  },
+  "prompt_format_experiment": {
+    "packages": 8,
+    "model": "google/flan-t5-base",
+    "variants": {
+      "name_in_question (original)": {
+        "validity": 0.12,
+        "coverage": 0.608
+      },
+      "list_every_name_in_sentence": {
+        "validity": 0.12,
+        "coverage": 0.796
+      },
+      "bare_list_repeat_exactly": {
+        "validity": 0.75,
+        "coverage": 0.95
+      },
+      "imperative_do_not_stop_early": {
+        "validity": 0.12,
+        "coverage": 0.813
+      }
+    },
+    "conclusion": "The winning variant never names the package. Naming it invites an extractive answer whose shortest valid span is the name itself. 6.25x validity from removing one phrase."
+  },
+  "before_and_after": {
+    "before": {
+      "overall_validity": 0.5778,
+      "overall_coverage": 0.8731,
+      "collapse_depth": 3,
+      "deepest_success": 6,
+      "by_depth": {
+        "1": {
+          "n": 6,
+          "validity": 1.0,
+          "mean_coverage": 1.0,
+          "mean_closure_size": 3.2,
+          "mean_prompt_tokens": 187.0,
+          "truncation_rate": 0.0,
+          "mean_tokens_dropped": 0.0,
+          "mean_order_violations": 0.0
+        },
+        "2": {
+          "n": 6,
+          "validity": 0.8333,
+          "mean_coverage": 0.8667,
+          "mean_closure_size": 4.2,
+          "mean_prompt_tokens": 187.7,
+          "truncation_rate": 0.0,
+          "mean_tokens_dropped": 0.0,
+          "mean_order_violations": 0.0
+        },
+        "3": {
+          "n": 6,
+          "validity": 0.3333,
+          "mean_coverage": 0.7027,
+          "mean_closure_size": 7.8,
+          "mean_prompt_tokens": 187.8,
+          "truncation_rate": 0.0,
+          "mean_tokens_dropped": 0.0,
+          "mean_order_violations": 0.0
+        },
+        "4": {
+          "n": 6,
+          "validity": 1.0,
+          "mean_coverage": 1.0,
+          "mean_closure_size": 15.3,
+          "mean_prompt_tokens": 207.3,
+          "truncation_rate": 0.0,
+          "mean_tokens_dropped": 0.0,
+          "mean_order_violations": 0.0
+        },
+        "5": {
+          "n": 6,
+          "validity": 0.8333,
+          "mean_coverage": 0.9965,
+          "mean_closure_size": 30.5,
+          "mean_prompt_tokens": 219.8,
+          "truncation_rate": 0.0,
+          "mean_tokens_dropped": 0.0,
+          "mean_order_violations": 0.0
+        },
+        "6": {
+          "n": 6,
+          "validity": 0.3333,
+          "mean_coverage": 0.7423,
+          "mean_closure_size": 43.7,
+          "mean_prompt_tokens": 274.3,
+          "truncation_rate": 0.1667,
+          "mean_tokens_dropped": 1.3,
+          "mean_order_violations": 0.0
+        },
+        "7": {
+          "n": 3,
+          "validity": 0.0,
+          "mean_coverage": 0.8009,
+          "mean_closure_size": 65.7,
+          "mean_prompt_tokens": 373.7,
+          "truncation_rate": 0.0,
+          "mean_tokens_dropped": 0.0,
+          "mean_order_violations": 0.0
+        },
+        "8": {
+          "n": 4,
+          "validity": 0.0,
+          "mean_coverage": 0.8876,
+          "mean_closure_size": 53.0,
+          "mean_prompt_tokens": 397.8,
+          "truncation_rate": 0.25,
+          "mean_tokens_dropped": 16.8,
+          "mean_order_violations": 0.0
+        },
+        "9": {
+          "n": 2,
+          "validity": 0.0,
+          "mean_coverage": 0.7446,
+          "mean_closure_size": 65.5,
+          "mean_prompt_tokens": 400.0,
+          "truncation_rate": 0.5,
+          "mean_tokens_dropped": 24.0,
+          "mean_order_violations": 0.0
+        }
+      }
+    },
+    "after": {
+      "overall_validity": 0.8036,
+      "overall_coverage": 0.9538,
+      "collapse_depth": 7,
+      "deepest_success": 9,
+      "by_depth": {
+        "1": {
+          "n": 8,
+          "validity": 0.875,
+          "mean_coverage": 0.9375,
+          "mean_closure_size": 3.0,
+          "mean_prompt_tokens": 187.1,
+          "truncation_rate": 0.0,
+          "mean_tokens_dropped": 0.0,
+          "mean_order_violations": 0.0
+        },
+        "2": {
+          "n": 8,
+          "validity": 1.0,
+          "mean_coverage": 1.0,
+          "mean_closure_size": 5.4,
+          "mean_prompt_tokens": 186.2,
+          "truncation_rate": 0.0,
+          "mean_tokens_dropped": 0.0,
+          "mean_order_violations": 0.0
+        },
+        "3": {
+          "n": 8,
+          "validity": 1.0,
+          "mean_coverage": 1.0,
+          "mean_closure_size": 7.1,
+          "mean_prompt_tokens": 189.1,
+          "truncation_rate": 0.0,
+          "mean_tokens_dropped": 0.0,
+          "mean_order_violations": 0.0
+        },
+        "4": {
+          "n": 8,
+          "validity": 0.875,
+          "mean_coverage": 0.9833,
+          "mean_closure_size": 15.2,
+          "mean_prompt_tokens": 191.2,
+          "truncation_rate": 0.0,
+          "mean_tokens_dropped": 0.0,
+          "mean_order_violations": 0.0
+        },
+        "5": {
+          "n": 8,
+          "validity": 0.75,
+          "mean_coverage": 0.9375,
+          "mean_closure_size": 37.4,
+          "mean_prompt_tokens": 242.2,
+          "truncation_rate": 0.125,
+          "mean_tokens_dropped": 1.6,
+          "mean_order_violations": 0.0
+        },
+        "6": {
+          "n": 7,
+          "validity": 0.8571,
+          "mean_coverage": 0.9483,
+          "mean_closure_size": 42.3,
+          "mean_prompt_tokens": 251.1,
+          "truncation_rate": 0.1429,
+          "mean_tokens_dropped": 1.1,
+          "mean_order_violations": 0.0
+        },
+        "7": {
+          "n": 3,
+          "validity": 0.3333,
+          "mean_coverage": 0.8448,
+          "mean_closure_size": 65.7,
+          "mean_prompt_tokens": 352.3,
+          "truncation_rate": 0.0,
+          "mean_tokens_dropped": 0.0,
+          "mean_order_violations": 0.0
+        },
+        "8": {
+          "n": 4,
+          "validity": 0.25,
+          "mean_coverage": 0.9405,
+          "mean_closure_size": 53.0,
+          "mean_prompt_tokens": 375.2,
+          "truncation_rate": 0.25,
+          "mean_tokens_dropped": 16.8,
+          "mean_order_violations": 0.0
+        },
+        "9": {
+          "n": 2,
+          "validity": 0.5,
+          "mean_coverage": 0.8056,
+          "mean_closure_size": 65.5,
+          "mean_prompt_tokens": 388.0,
+          "truncation_rate": 0.5,
+          "mean_tokens_dropped": 24.0,
+          "mean_order_violations": 0.0
+        }
+      }
+    }
+  },
+  "secondary_finding": {
+    "claim_tested": "A depth-aware A* heuristic will prune the search.",
+    "verdict": "It prunes NOTHING - identical expansions to Dijkstra on every pair tested (16 vs 16, 7 vs 7). The trivial constant heuristic prunes far better (2 vs 16, 2 vs 7). The clever heuristic lost to the obvious one.",
+    "and_it_was_wrong": "Its first version returned |level(goal) - level(n)|, which over-estimates whenever the goal is shallower than the node - inadmissible, so A* silently stops being optimal. verify_admissible() caught it against Dijkstra ground truth, not a reviewer."
+  },
+  "truncation_analysis": {
+    "total_failures": 11,
+    "attribution": {
+      "M1_input_truncation": {
+        "count": 0,
+        "share": 0.0
+      },
+      "M2_output_limit": {
+        "count": 4,
+        "share": 0.3636
+      },
+      "M3_neither": {
+        "count": 3,
+        "share": 0.2727
+      },
+      "M1_and_M2": {
+        "count": 4,
+        "share": 0.3636
+      }
+    },
+    "examples": {
+      "M1_input_truncation": [],
+      "M2_output_limit": [
+        {
+          "package": "jupyter-server",
+          "depth": 7,
+          "closure_size": 54,
+          "coverage": 0.9629629629629629,
+          "prompt_tokens": 347,
+          "tokens_dropped": 0,
+          "output_tokens_needed": 335,
+          "output_cap": 320
+        },
+        {
+          "package": "dvc",
+          "depth": 7,
+          "closure_size": 105,
+          "coverage": 0.5714285714285714,
+          "prompt_tokens": 507,
+          "tokens_dropped": 0,
+          "output_tokens_needed": 570,
+          "output_cap": 320
+        },
+        {
+          "package": "jupyter-lsp",
+          "depth": 8,
+          "closure_size": 55,
+          "coverage": 0.9454545454545454,
+          "prompt_tokens": 357,
+          "tokens_dropped": 0,
+          "output_tokens_needed": 345,
+          "output_cap": 320
+        },
+        {
+          "package": "notebook-shim",
+          "depth": 8,
+          "closure_size": 55,
+          "coverage": 0.9454545454545454,
+          "prompt_tokens": 352,
+          "tokens_dropped": 0,
+          "output_tokens_needed": 340,
+          "output_cap": 320
+        }
+      ],
+      "M3_neither": [
+        {
+          "package": "click-plugins",
+          "depth": 1,
+          "closure_size": 2,
+          "coverage": 0.5,
+          "prompt_tokens": 187,
+          "tokens_dropped": 0,
+          "output_tokens_needed": 7,
+          "output_cap": 320
+        },
+        {
+          "package": "keyring",
+          "depth": 4,
+          "closure_size": 15,
+          "coverage": 0.8666666666666667,
+          "prompt_tokens": 183,
+          "tokens_dropped": 0,
+          "output_tokens_needed": 95,
+          "output_cap": 320
+        },
+        {
+          "package": "poetry",
+          "depth": 5,
+          "closure_size": 48,
+          "coverage": 0.9583333333333334,
+          "prompt_tokens": 261,
+          "tokens_dropped": 0,
+          "output_tokens_needed": 249,
+          "output_cap": 320
+        }
+      ],
+      "M1_and_M2": [
+        {
+          "package": "prefect",
+          "depth": 5,
+          "closure_size": 109,
+          "coverage": 0.5412844036697247,
+          "prompt_tokens": 525,
+          "tokens_dropped": 13,
+          "output_tokens_needed": 590,
+          "output_cap": 320
+        },
+        {
+          "package": "mlflow",
+          "depth": 6,
+          "closure_size": 94,
+          "coverage": 0.6382978723404256,
+          "prompt_tokens": 520,
+          "tokens_dropped": 8,
+          "output_tokens_needed": 501,
+          "output_cap": 320
+        },
+        {
+          "package": "jupyterlab-server",
+          "depth": 8,
+          "closure_size": 62,
+          "coverage": 0.8709677419354839,
+          "prompt_tokens": 579,
+          "tokens_dropped": 67,
+          "output_tokens_needed": 375,
+          "output_cap": 320
+        },
+        {
+          "package": "jupyterlab",
+          "depth": 9,
+          "closure_size": 90,
+          "coverage": 0.6111111111111112,
+          "prompt_tokens": 560,
+          "tokens_dropped": 48,
+          "output_tokens_needed": 545,
+          "output_cap": 320
+        }
+      ]
+    },
+    "output_cap": 320
+  },
+  "correlations": {
+    "validity_vs_depth": -0.441,
+    "validity_vs_closure_size": -0.709,
+    "validity_vs_prompt_tokens": -0.7878,
+    "validity_vs_tokens_dropped": -0.4492,
+    "coverage_vs_closure_size": -0.6632,
+    "note": "Negative r means the driver predicts FAILURE. The strongest negative correlate is the mechanism worth fixing first."
+  },
+  "known_limits": [
+    "One model. The format effect is measured on flan-t5-base; a larger instruction-tuned model would very likely be robust to it, which is exactly why the finding is about tool output design rather than about language models being unreliable.",
+    "The depth axis is confounded with closure size - deeper packages also have bigger closures - and this sweep cannot separate them.",
+    "Small samples at the deep end: the graph contains only 2 packages at depth 9 and 3 at depth 7, so those rows are indicative, not precise.",
+    "The agent has a tool that returns the exact answer, so this measures tool USE, not reasoning. That is deliberate, and it is why a failure is interesting: the answer was always available.",
+    "pgvector is implemented and schema-complete but the measured results use the exact numpy store; at 822 documents brute force is faster than any approximate index."
+  ]
+}
