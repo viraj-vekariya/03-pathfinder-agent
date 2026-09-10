@@ -10,7 +10,7 @@
 
   The graph algorithms below are REIMPLEMENTED IN JAVASCRIPT and run in your browser over
   the same 411-package graph (data/dependency_graph.json) that the Python does. That is
-  not a mock: Kahn's algorithm, Tarjan's SCC and the BFS depth walk are all here, and they
+  not a mock: Kahn's algorithm, Tarjan's SCC and the DAG longest-path walk are all here, and they
   produce the same install orders the tests assert in Python.
 
   Everything else on the page is read from outputs/results.json - the measured output of
@@ -189,7 +189,7 @@ function App(){
         </>}
       </div>
       <div className="note">
-        This is not a recorded demo. Kahn's algorithm, Tarjan's SCC and the BFS depth walk are
+        This is not a recorded demo. Kahn's algorithm, Tarjan's SCC and the DAG longest-path walk are
         reimplemented in JavaScript on this page and run over the same graph the Python tests
         assert against. Try <code>apache-airflow</code> — it has a genuine cycle.
       </div>
