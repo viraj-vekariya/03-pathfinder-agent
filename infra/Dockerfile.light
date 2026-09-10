@@ -1,0 +1,29 @@
+# Graph-only image for the 512MB free tier.
+#
+# No torch, no transformers - the graph endpoints are pure Python over a 1MB JSON, so the
+# image is ~60MB instead of ~1.5GB and starts instantly. See render.yaml for why.
+FROM python:3.12-slim
+RUN useradd --create-home --uid 10001 pathfinder
+WORKDIR /app
+
+RUN pip install --no-cache-dir fastapi "uvicorn[standard]" numpy
+
+COPY graph/ ./graph/
+COPY rag/ ./rag/
+COPY agent/ ./agent/
+COPY api/ ./api/
+COPY data/dependency_graph.json ./data/
+
+RUN chown -R pathfinder:pathfinder /app
+USER pathfinder
+
+ENV PYTHONUNBUFFERED=1 \
+    PATHFINDER_LIGHT=1 \
+    PATHFINDER_GRAPH=/app/data/dependency_graph.json
+
+EXPOSE 8300
+HEALTHCHECK --interval=20s --timeout=5s --start-period=15s --retries=3 \
+    CMD python -c "import urllib.request,sys; \
+        sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8300/health',timeout=4).status==200 else 1)"
+
+CMD ["sh","-c","uvicorn api.app:app --host 0.0.0.0 --port ${PORT:-8300}"]

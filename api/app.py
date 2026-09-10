@@ -45,6 +45,17 @@ GRAPH_PATH = Path(os.environ.get("PATHFINDER_GRAPH", ROOT / "data" / "dependency
 UI = ROOT / "api" / "index.html"
 
 
+# LIGHT MODE. The graph endpoints - /plan, /path, /cycles, /depths - need no model at
+# all; they are pure algorithms over a 1MB JSON. Retrieval needs MiniLM (~90MB) and the
+# agent needs flan-t5-base (~1GB), which together do not fit a 512MB free tier.
+#
+# So the deployed service runs graph-only and SAYS SO on /health. That is the honest
+# split: the DSA core - the part the project is actually about - is live and real, and
+# the LLM comparison is reproducible locally with `make serve`. Shipping a crippled
+# model would be worse than shipping none.
+LIGHT_MODE = os.environ.get("PATHFINDER_LIGHT", "0") not in ("0", "false", "")
+
+
 class State:
     graph = None
     metadata: Dict = {}
@@ -53,6 +64,7 @@ class State:
     llm = None
     ready = False
     error = ""
+    light = LIGHT_MODE
 
 
 state = State()
@@ -63,6 +75,13 @@ async def lifespan(app: FastAPI):
     try:
         state.graph, state.metadata = load(GRAPH_PATH)
         log.info("graph: %s", state.graph.stats())
+
+        if LIGHT_MODE:
+            state.ready = True
+            log.info("LIGHT MODE: graph endpoints only; retrieval and the agent are "
+                     "disabled because MiniLM and flan-t5-base do not fit 512MB")
+            yield
+            return
 
         docs = build_corpus(state.graph, state.metadata)
         embedder = get_embedder("auto")
@@ -108,6 +127,13 @@ async def health():
     graph = state.graph
     return {
         "status": "ok" if state.ready else "degraded",
+        "mode": "graph-only (light)" if state.light else "full",
+        "light_mode_note": (
+            "Retrieval and the LLM agent are disabled on this instance: MiniLM (~90MB) "
+            "and flan-t5-base (~1GB) do not fit the 512MB free tier. Every graph "
+            "endpoint - /plan, /path, /cycles, /depths - is fully live and is the part "
+            "this project is about. Run `make serve` locally for the full agent "
+            "comparison." if state.light else None),
         "graph": graph.stats() if graph else None,
         "retrieval": state.retriever is not None,
         "llm": {"backend": state.llm.backend, "model": state.llm.model,

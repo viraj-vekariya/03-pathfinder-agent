@@ -1,0 +1,21 @@
+# Render blueprint, free tier (512 MB).
+#
+# PATHFINDER_LIGHT=1 runs the graph endpoints only. MiniLM and flan-t5-base together are
+# ~1.1GB and will not fit; rather than ship a degraded model, the deployed service runs
+# the pure-algorithm half - which is the part the project is actually about - and says so
+# on /health. The full agent comparison runs locally with `make serve`.
+services:
+  - type: web
+    name: pathfinder-graph-api
+    runtime: docker
+    dockerfilePath: ./infra/Dockerfile.light
+    dockerContext: .
+    plan: free
+    region: singapore
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PATHFINDER_LIGHT
+        value: "1"
+      - key: PATHFINDER_GRAPH
+        value: /app/data/dependency_graph.json
