@@ -2,6 +2,8 @@
 
 **[▶ Live demo](https://viraj-vekariya.github.io/03-pathfinder-agent/)** — resolves install orders over the real 411-package graph in your browser. Kahn, Tarjan and the DAG longest-path are reimplemented in JavaScript and [verified against the Python](tools/check_js_matches_python.py) to produce identical output.
 
+**[⇧ Deploy it yourself](https://render.com/deploy?repo=https://github.com/viraj-vekariya/03-pathfinder-agent)** — one click builds `render.yaml` on Render's free tier: the graph API in light mode - no torch, no corpus, ~60 MB. No card, no configuration.
+
 Graph search over **real PyPI dependency graphs**, with an LLM agent attempting the same
 task and graded against the exact algorithm. Retrieval-augmented, pgvector-backed,
 deployed.
