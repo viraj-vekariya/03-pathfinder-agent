@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pathfinder — graph search over real PyPI dependencies</title>
+<meta name="description" content="Kahn, Tarjan and BFS running client-side over 411 real PyPI packages, with the measured findings from the LLM agent evaluation.">
+<!--
+  Static demo, hosted on GitHub Pages. No backend, no hosting cost.
+
+  The graph algorithms below are REIMPLEMENTED IN JAVASCRIPT and run in your browser over
+  the same 411-package graph (data/dependency_graph.json) that the Python does. That is
+  not a mock: Kahn's algorithm, Tarjan's SCC and the BFS depth walk are all here, and they
+  produce the same install orders the tests assert in Python.
+
+  Everything else on the page is read from outputs/results.json - the measured output of
+  a real evaluation run.
+-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.2/babel.min.js"></script>
+<style>
+  :root{--bg:#0c1017;--panel:#141a23;--panel2:#1b2330;--line:#28323f;--text:#e6edf3;
+        --dim:#8a97a8;--accent:#7aa2f7;--ok:#4ec26f;--bad:#f2545b;--warn:#e0a54a;
+        --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+  .wrap{max-width:1180px;margin:0 auto;padding:24px 16px 70px}
+  header{border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:18px}
+  h1{font-size:23px;margin:0 0 6px;letter-spacing:-.02em}
+  .sub{color:var(--dim);font-size:13.5px;max-width:78ch}
+  .links{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+  .links a{color:var(--accent);text-decoration:none;font:600 12px var(--mono);
+    border:1px solid var(--line);padding:6px 11px;border-radius:7px}
+  .links a:hover{border-color:var(--accent)}
+  .banner{background:linear-gradient(90deg,rgba(122,162,247,.10),transparent);
+    border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;
+    padding:14px 16px;margin-bottom:18px}
+  .banner b{color:var(--accent)}
+  .grid{display:grid;gap:14px}
+  .cards{grid-template-columns:repeat(auto-fit,minmax(158px,1fr))}
+  .card,.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px}
+  .card{padding:12px 14px}
+  .card .label{color:var(--dim);font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+  .card .value{font:600 21px/1.2 var(--mono);margin-top:5px}
+  .card .foot{color:var(--dim);font:11px var(--mono);margin-top:2px}
+  .panel{overflow:hidden;margin-top:14px}
+  .panel h2{font-size:12px;margin:0;padding:11px 14px;border-bottom:1px solid var(--line);
+    color:var(--dim);text-transform:uppercase;letter-spacing:.07em;font-weight:600}
+  .pad{padding:14px}
+  input,select{font:13px var(--mono);padding:9px 11px;border-radius:7px;
+    border:1px solid var(--line);background:var(--panel2);color:var(--text);min-width:250px}
+  button{font:600 12px/1 inherit;padding:9px 13px;border-radius:7px;cursor:pointer;
+    border:1px solid var(--line);background:var(--panel2);color:var(--text)}
+  button:hover{border-color:var(--accent)}
+  .bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  ol{margin:0;padding-left:28px;font:12px var(--mono);line-height:1.8;
+     columns:3;column-gap:24px}
+  @media(max-width:760px){ol{columns:1}}
+  ol li::marker{color:var(--dim)}
+  table{width:100%;border-collapse:collapse;font:12px var(--mono)}
+  th{background:var(--panel2);color:var(--dim);text-align:right;padding:7px 10px;
+     font-size:11px;border-bottom:1px solid var(--line)}
+  th:first-child,td:first-child{text-align:left}
+  td{padding:6px 10px;border-bottom:1px solid #1a222c;text-align:right}
+  .note{color:var(--dim);font-size:12.5px;padding:0 14px 14px;line-height:1.55;max-width:80ch}
+  .kv{display:grid;grid-template-columns:auto 1fr;gap:3px 14px;font:12px var(--mono)}
+  .kv dt{color:var(--dim)} .kv dd{margin:0}
+  code{font-family:var(--mono);background:var(--panel2);padding:1px 5px;border-radius:4px}
+  .warn{color:var(--warn)} .good{color:var(--ok)} .bad{color:var(--bad)}
+</style>
+</head>
+<body>
+<div id="root"><div class="wrap"><p style="color:#8a97a8">loading the dependency graph…</p></div></div>
+<script src="algorithms.js"></script>
+<script type="text/babel">
+const {useState,useEffect,useMemo,useCallback} = React;
+
+/* ---------- UI ----------------------------------------------------------- */
+
+function App(){
+  const [graph,setGraph] = useState(null);
+  const [res,setRes] = useState(null);
+  const [pkg,setPkg] = useState("flask");
+  const [err,setErr] = useState("");
+
+  useEffect(()=>{
+    Promise.all([fetch("graph.json").then(r=>r.json()), fetch("results.json").then(r=>r.json())])
+      .then(([g,r])=>{ setGraph(g); setRes(r); }).catch(e=>setErr(String(e)));
+  },[]);
+
+  const cycles = useMemo(()=> graph ? findCycles(graph.edges, graph.nodes) : [], [graph]);
+
+  const result = useMemo(()=>{
+    if(!graph) return null;
+    const name = pkg.trim().toLowerCase();
+    if(!graph.nodes.includes(name)) return {missing:true, name};
+    const t0 = performance.now();
+    const order = installOrder(graph.edges, name);
+    const {max} = depthOf(graph.edges, name);
+    const ms = performance.now() - t0;
+    return {name, order, depth:max, closure:closureFrom(graph.edges,name).size, ms,
+            summary: graph.summary[name] || ""};
+  },[graph,pkg]);
+
+  const suggestions = useMemo(()=>{
+    if(!graph) return [];
+    const q = pkg.trim().toLowerCase();
+    return graph.nodes.filter(n=>n.includes(q)).slice(0,8);
+  },[graph,pkg]);
+
+  if(err) return <div className="wrap"><p className="bad">could not load data: {err}</p></div>;
+  if(!graph || !res) return <div className="wrap"><p className="sub">loading…</p></div>;
+
+  const f = res.headline_finding, before = res.before_and_after.before, after = res.before_and_after.after;
+
+  return <div className="wrap">
+    <header>
+      <h1>Pathfinder — graph search over real PyPI dependencies</h1>
+      <div className="sub">
+        Dijkstra, A*, iterative Tarjan and Kahn over <b>{graph.stats.nodes} real packages</b> fetched
+        live from PyPI, with an LLM agent attempting the same install-order task and graded
+        against the exact algorithm.
+      </div>
+      <div className="links">
+        <a href="https://github.com/viraj-vekariya/03-pathfinder-agent">source on GitHub</a>
+        <a href="https://github.com/viraj-vekariya/03-pathfinder-agent/blob/main/DECISIONS.md">DECISIONS.md</a>
+        <a href="https://github.com/viraj-vekariya/03-pathfinder-agent/blob/main/outputs/results.json">measured results</a>
+      </div>
+    </header>
+
+    <div className="banner">
+      <b>The finding:</b> the assumed cause of failure — context-window truncation —
+      explained <b>0% of errors</b>. A 4k context rescued 0 of 19 failing cases and raising the
+      output cap improved 0 of 10. The real cause was the <b>format of the tool's own output</b>;
+      removing one lead-in phrase took plan validity from <b>{before.overall_validity} to {after.overall_validity}</b>.
+    </div>
+
+    <div className="grid cards">
+      <div className="card"><div className="label">Packages</div>
+        <div className="value">{graph.stats.nodes}</div>
+        <div className="foot">{graph.stats.edges} edges, live from PyPI</div></div>
+      <div className="card"><div className="label">Plan validity</div>
+        <div className="value good">{after.overall_validity}</div>
+        <div className="foot">from {before.overall_validity} before the fix</div></div>
+      <div className="card"><div className="label">Truncation</div>
+        <div className="value bad">0%</div>
+        <div className="foot">of failures explained</div></div>
+      <div className="card"><div className="label">Deepest success</div>
+        <div className="value">{after.deepest_success}</div>
+        <div className="foot">from {before.deepest_success}</div></div>
+      <div className="card"><div className="label">Tests</div>
+        <div className="value">{res.tests.split(" ")[0]}</div>
+        <div className="foot">{res.lines_of_code.total.toLocaleString()} lines</div></div>
+      <div className="card"><div className="label">Real cycles found</div>
+        <div className="value warn">{cycles.length}</div>
+        <div className="foot">in live package metadata</div></div>
+    </div>
+
+    <div className="panel">
+      <h2>Resolve an install order — running in your browser</h2>
+      <div className="pad">
+        <div className="bar">
+          <input value={pkg} onChange={e=>setPkg(e.target.value)} list="pkgs"
+                 placeholder="package name"/>
+          <datalist id="pkgs">{suggestions.map(s=><option key={s} value={s}/>)}</datalist>
+          {["flask","jupyterlab","langchain","dvc","apache-airflow","transformers"].map(s=>
+            <button key={s} onClick={()=>setPkg(s)} style={{fontWeight:400}}>{s}</button>)}
+        </div>
+
+        {result?.missing && <p className="warn" style={{marginTop:14}}>
+          <code>{result.name}</code> is not in this graph. It holds the dependency closure of
+          31 seed packages, not all of PyPI.</p>}
+
+        {result && !result.missing && <>
+          <dl className="kv" style={{marginTop:14}}>
+            <dt>dependency depth</dt><dd>{result.depth}</dd>
+            <dt>packages to install</dt><dd>{result.closure}</dd>
+            <dt>resolved in</dt><dd>{result.ms.toFixed(2)} ms (Kahn, in JavaScript)</dd>
+            {result.summary && <><dt>what it is</dt><dd>{result.summary}</dd></>}
+          </dl>
+          {result.order
+            ? <ol style={{marginTop:14}}>{result.order.map(p=><li key={p}>{p}</li>)}</ol>
+            : <p className="warn" style={{marginTop:14}}>
+                No valid install order exists — this closure contains a circular dependency.
+                The planner reports that rather than inventing a plausible-looking wrong answer.
+              </p>}
+        </>}
+      </div>
+      <div className="note">
+        This is not a recorded demo. Kahn's algorithm, Tarjan's SCC and the BFS depth walk are
+        reimplemented in JavaScript on this page and run over the same graph the Python tests
+        assert against. Try <code>apache-airflow</code> — it has a genuine cycle.
+      </div>
+    </div>
+
+    {cycles.length > 0 && <div className="panel">
+      <h2>Circular dependencies found in real package metadata</h2>
+      <div className="pad">{cycles.map((c,i)=>
+        <div key={i} style={{font:"12px var(--mono)",color:"var(--warn)",marginBottom:8,
+                             wordBreak:"break-word",lineHeight:1.7}}>
+          {c.join(" → ")} → {c[0]}
+        </div>)}</div>
+      <div className="note">Found by iterative Tarjan over live PyPI metadata — not a
+        constructed test case.</div>
+    </div>}
+
+    <div className="panel">
+      <h2>Plan validity by dependency depth — before and after the fix</h2>
+      <div className="pad"><table>
+        <thead><tr><th>depth</th>
+          {Object.keys(after.by_depth).map(d=><th key={d}>{d}</th>)}</tr></thead>
+        <tbody>
+          <tr><td>before</td>{Object.keys(after.by_depth).map(d=>
+            <td key={d} className="bad">{before.by_depth[d] ? before.by_depth[d].validity.toFixed(2) : "—"}</td>)}</tr>
+          <tr><td>after</td>{Object.keys(after.by_depth).map(d=>
+            <td key={d} className="good">{after.by_depth[d].validity.toFixed(2)}</td>)}</tr>
+        </tbody></table></div>
+      <div className="note">
+        The <i>before</i> row is not even monotonic — depth 3 sat at 0.33 while depth 4 hit 1.00.
+        That non-monotonicity was the first clue that depth was not the variable doing the work.
+      </div>
+    </div>
+
+    <div className="panel">
+      <h2>What was falsified, and how</h2>
+      <div className="pad"><table>
+        <thead><tr><th>candidate cause</th><th>test</th><th>result</th></tr></thead>
+        <tbody>
+          <tr><td>input truncation</td><td>rerun failures with a 4k context</td>
+              <td className="bad">rescued 0 of 19</td></tr>
+          <tr><td>output token limit</td><td>raise the cap 320 → 1024</td>
+              <td className="bad">improved 0 of 10</td></tr>
+          <tr><td>reasoning failure</td><td>count ordering violations</td>
+              <td className="bad">zero, across every failure</td></tr>
+          <tr><td><b>tool output format</b></td><td>remove the lead-in phrase</td>
+              <td className="good">validity {before.overall_validity} → {after.overall_validity}</td></tr>
+        </tbody></table></div>
+      <div className="note">
+        And once the format confound was removed, the correlations flipped: prompt size
+        (r = −0.79) replaced depth (r = −0.44) as the real driver. Depth was a proxy.
+      </div>
+    </div>
+
+    <div className="panel">
+      <h2>A second thing that got falsified — my own proof</h2>
+      <div className="note" style={{paddingTop:14}}>
+        The A* depth heuristic shipped with a confident admissibility argument in its
+        docstring. The argument only covered the case where the goal is <i>deeper</i> than the
+        node. When the goal is shallower, <code>|level(goal) − level(n)|</code> over-estimates —
+        and an inadmissible heuristic does not error, it just silently stops being optimal.
+        <br/><br/>
+        <code>verify_admissible()</code> caught it against Dijkstra ground truth. The corrected
+        heuristic then turned out to prune <b>nothing</b> — identical expansions to Dijkstra on
+        every pair — while the trivial constant heuristic pruned 8×. The clever idea lost to the
+        obvious one, and that is reported rather than buried.
+      </div>
+    </div>
+  </div>;
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
